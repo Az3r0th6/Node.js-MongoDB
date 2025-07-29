@@ -1,23 +1,100 @@
-# node-mongo-big-file-exercise
+# Node.js-MongoDB
 
-Hola! Este es un ejercicio para poner a prueba tus conocimientos de NodeJS y MongoDB. El objetivo es realizar un endpoint que reciba un archivo de ~80mb separado por comas y guarde cada uno de los registros del archivo en la base de datos.
+# 📦 Carga Masiva de Registros CSV con Node.js + MongoDB
 
-El archivo podés descargarlo de este link:
-https://drive.google.com/file/d/1tg8dWr4RD2CeKjEdlZdTT8kLDzfITv_S/view?usp=sharing
-(está zippeado para que lo descargues rápido, descomprimilo manualmente)
+Este proyecto fue desarrollado como ejercicio para poner a prueba el manejo de archivos grandes, procesamiento eficiente con streams y carga por lotes en MongoDB usando Node.js.
 
-Se evaluará teniendo en cuenta la prolijidad del código (indentación, comentarios y legibilidad), la performance (tiempo de procesado y memoria utilizada) y escalabilidad (si soporta archivos aún más grandes).
+---
 
-Para simplificarlo, hemos creado este repo starter que se conecta a la base de datos, crea el modelo y expone el endpoint `[POST] /upload` donde tenés que subir el archivo (podés probarlo con Postman). En el archivo `src/controller.js` tenés que ingresar tu código.
+## 🚀 ¿Qué hace?
 
-## Consideraciones
+Permite subir un archivo `.csv` de gran tamaño (~80MB o más), procesarlo línea por línea y guardar cada registro en MongoDB, sin consumir demasiada memoria y manteniendo buena performance.
 
-- Hace un fork de este repo para comenzar, y cuando tengas la solución compartí tu repositorio con quien te solicitó este ejercicio.
-- Recordá correr `npm install` o `yarn install` para instalar las dependencias
-- Podés usar hasta 1 librería de tu preferencia además de las incluídas.
-- En el endpoint `[GET] /records` podés ver los 10 últimos registros que se procesaron.
-- El archivo subido se guarda en el directorio `_temp`, recordá eliminarlo luego de utilizarlo.
-- Modificá el archivo `.env` para cambiar el puerto y la conexión a la base de datos.
+---
 
-## Postman
-En el directorio `postman` del repo, vas a encontrar los dos requests para que puedas importarlos en Postman.
+## 🔧 Tecnologías usadas
+
+- Node.js
+- Express
+- MongoDB (via Mongoose)
+- Multer (para subida de archivos)
+- FS + Readline (para procesamiento por stream)
+- Dotenv
+
+---
+
+## 📁 Estructura del proyecto
+📦 raiz
+┣ 📂 src
+┃ ┣ 📜 controller.js → Lógica principal de carga
+┃ ┣ 📜 records.model.js → Modelo de Mongo
+┣ 📜 route.js → Rutas de Express
+┣ 📜 app.js / index.js → Configuración del servidor
+┣ 📜 .env → Configuración del entorno
+
+---
+
+## ⚙️ Cómo levantar el proyecto
+
+1. **Instalá las dependencias**
+
+```bash
+npm install
+
+2. Configurá tu .env
+PORT=4000
+NODE_ENV=production
+MONGODB_URL=mongodb://localhost:27017/rog-exercise
+
+3. Iniciá el servidor
+
+npm start
+
+Endpoint para subir archivo
+POST /api/upload
+
+    Tipo de body: form-data
+
+    Campo requerido: file
+
+    Valor: archivo .csv descomprimido
+
+📌 El archivo debe tener los siguientes campos, separados por coma:
+id, firstname, lastname, email, email2, profession
+
+📎 Ejemplo de respuesta:
+
+{
+  "message": "Se procesaron 999991 registros correctamente"
+}
+
+📄 Endpoint de consulta
+GET /api/list
+
+Devuelve los primeros 10 registros guardados en la base.
+⚠️ Consideraciones
+
+    La primera línea del .csv (cabecera) se ignora.
+
+    Líneas vacías o con menos de 6 columnas se omiten.
+
+    El sistema carga los datos en lotes de 10.000 registros para mayor eficiencia.
+
+    El archivo temporal se borra automáticamente una vez terminado el proceso.
+
+    En caso de error, también se intenta limpiar el archivo.
+
+🧪 Tests sugeridos
+
+    Probar con archivos grandes (más de 100MB).
+
+    Simular archivos con líneas corruptas o incompletas.
+
+    Verificar que no se frene ante duplicados.
+
+    Medir tiempo de ejecución (console.time()).
+
+✌️ Hecho por mí
+
+Desarrollado como parte de un desafío técnico.
+Con foco en performance, prolijidad de código y buenas prácticas.
